@@ -33,6 +33,9 @@ struct zxay_song {
 	char PSongData[2];
 };
 
+#define PPOINTS_OFFSET 10
+#define PADDRESSES_OFFSET 12
+
 struct zxay_songdata {
 	char AChan;
 	char BChan;
@@ -46,5 +49,19 @@ struct zxay_songdata {
 	char PAddresses[2];
 };
 
+struct zxay_songpointers {
+	char Stack[2];
+	char INIT[2];
+	char INTERRUPT[2];
+};
+
+struct zxay_songdatablock {
+	char Address[2];
+	char Length[2];
+	char Offset[2];
+};
+
+	
+	
 
 #endif
