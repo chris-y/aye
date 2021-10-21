@@ -1,0 +1,29 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        id: build
+        run: make -f Makefile
+  build_ppc:
+    runs-on: ubuntu-latest
+    container:
+      image: amigadev/crosstools:ppc-amigaos
+    name: build_os4
+    steps:
+      - uses: actions/checkout@v2
+      - name: build_os4
+        id: build_os4
+        run: make -f Makefile.amiga
+      - uses: actions/upload-artifact@v1
+        with:
+          name: aye_os4
+          path: aye
