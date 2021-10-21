@@ -2,7 +2,7 @@ CC := gcc
 CFLAGS := -std=c99
 LIBS :=
 
-OBJS := aye.o aye_read.o
+OBJS := aye.o zxay_read.o
 DEPS := zxay.h zxay_read.h
 
 all: aye
