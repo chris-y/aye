@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <malloc.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "zxay_read.h"
