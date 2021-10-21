@@ -25,9 +25,26 @@ struct zxay_header {
 	char PSongsStructure[2];
 };
 
+#define PSONGNAME_OFFSET 0
+#define PSONGDATA_OFFSET 2
+
 struct zxay_song {
 	char PSongName[2];
 	char PSongData[2];
 };
+
+struct zxay_songdata {
+	char AChan;
+	char BChan;
+	char CChan;
+	char Noise;
+	char SongLength[2];
+	char FadeLength[2];
+	char HiReg;
+	char LoReg;
+	char PPoints[2];
+	char PAddresses[2];
+};
+
 
 #endif

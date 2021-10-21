@@ -69,10 +69,35 @@ char *aye_read_misc(FILE *fp, struct zxay_header *header)
 char *aye_read_songname(FILE *fp, struct zxay_header *header, struct zxay_song *songstructure, int16_t song)
 {
 	songstructure += (sizeof(struct zxay_song) * song);
-	int16_t songstructureoffset = readoffset(header->PSongsStructure, PSONGSSTRUCTURE_OFFSET);
+	int16_t songstructureoffset = readoffset(header->PSongsStructure, PSONGSSTRUCTURE_OFFSET + PSONGNAME_OFFSET);
 	int16_t offset = readoffset(songstructure->PSongName, songstructureoffset + (sizeof(struct zxay_song) * song));
 
 	return aye_read_generic(fp, offset);
+}
+
+struct zxay_songdata *aye_read_songdata(FILE *fp, struct zxay_header *header, struct zxay_song *songstructure, int16_t song)
+{
+	struct zxay_songdata *songdata = NULL;
+	size_t size = 0;
+	
+	songstructure += (sizeof(struct zxay_song) * song);
+	int16_t songstructureoffset = readoffset(header->PSongsStructure, PSONGSSTRUCTURE_OFFSET + PSONGDATA_OFFSET);
+	int16_t offset = readoffset(songstructure->PSongData, songstructureoffset + (sizeof(struct zxay_song) * song));
+
+	songdata = malloc(sizeof(struct zxay_songdata));
+	if(songdata == NULL) return NULL;
+	
+	if(fseek(fp, offset, SEEK_SET) == 0) {
+		size = fread(songdata, sizeof(struct zxay_song), (header->NumOfSongs + 1), fp);
+	
+		if(size != (header->NumOfSongs + 1)) {
+			printf("Error reading song data\n");
+			free(songdata);
+			return NULL;
+		}
+	}
+	
+	return songdata;
 }
 
 struct zxay_song *aye_read_songstructure(FILE *fp, struct zxay_header *header)
@@ -162,6 +187,7 @@ int main(int argc, char **argv)
 	char *author = NULL;
 	char *misc = NULL;
 	char **songname = NULL;
+	struct zxay_songdata **songdata;
 	char *outfile = NULL;
 	char *infile = NULL;
 
@@ -199,14 +225,24 @@ int main(int argc, char **argv)
 			printf("Tracks: %d\n", header->NumOfSongs + 1);
 			
 			songsstruct = aye_read_songstructure(fp, header);
-			songname = malloc((header->NumOfSongs + 1) * sizeof(char *));
+			songname = calloc(1, (header->NumOfSongs + 1) * sizeof(char *));
+			songdata = calloc(1, (header->NumOfSongs + 1) * sizeof(char *));
 			
-			for(int i = 0; i <= header->NumOfSongs; i++) {
-				songname[i] = aye_read_songname(fp, header, songsstruct, i);
-				printf(" %d: %s\n", i + 1, songname[i]);
+			if(songname && songdata) {
+				for(int i = 0; i <= header->NumOfSongs; i++) {
+					songname[i] = aye_read_songname(fp, header, songsstruct, i);
+					songdata[i] = aye_read_songdata(fp, header, songsstruct, i);
+					printf(" %d: %s\n", i + 1, songname[i]);
+				}
 			}
 
-			// TODO: free song names
+			/* free song names */
+			for(int i = 0; i <= header->NumOfSongs; i++) {
+				if(songname[i]) free(songname[i]);
+				if(songdata[i]) free(songdata[i]);
+			}
+			free(songname);
+			free(songdata);
 			free(misc);
 			free(author);
 			free(header);
