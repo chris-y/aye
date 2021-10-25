@@ -246,17 +246,17 @@ void zxay_free(void *zxayemul)
 		if(zxay->songdata[i]) free(zxay->songdata[i]);
 		if(zxay->songptrs[i]) free(zxay->songptrs[i]);
 	}
-	free(zxay->songname);
-	free(zxay->songdata);
-	free(zxay->songsstruct);
-	free(zxay->songptrs);
-	free(zxay->songblks);
-	free(zxay->off_songdata);
-	free(zxay->misc);
-	free(zxay->author);
-	free(zxay->header);
+	if(zxay->songname) free(zxay->songname);
+	if(zxay->songdata) free(zxay->songdata);
+	if(zxay->songsstruct) free(zxay->songsstruct);
+	if(zxay->songptrs) free(zxay->songptrs);
+	if(zxay->songblks) free(zxay->songblks);
+	if(zxay->off_songdata) free(zxay->off_songdata);
+	if(zxay->misc) free(zxay->misc);
+	if(zxay->author) free(zxay->author);
+	if(zxay->header) free(zxay->header);
 
-	free(zxay);
+	if(zxay) free(zxay);
 }
 
 void *zxay_load(char *filename)
