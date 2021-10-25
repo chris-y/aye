@@ -49,13 +49,13 @@ struct zxay_songdata {
 	char PAddresses[2];
 };
 
-struct zxay_songpointers {
+struct zxay_songptrs {
 	char Stack[2];
 	char INIT[2];
 	char INTERRUPT[2];
 };
 
-struct zxay_songdatablock {
+struct zxay_songblks {
 	char Address[2];
 	char Length[2];
 	char Offset[2];

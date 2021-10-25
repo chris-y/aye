@@ -2,8 +2,8 @@ CC := gcc
 CFLAGS := -std=c99
 LIBS :=
 
-OBJS := aye.o zxay_read.o
-DEPS := zxay.h zxay_read.h
+OBJS := aye.o zxay_load.o
+DEPS := zxay.h zxay_file.h zxay_load.h
 
 all: aye
 

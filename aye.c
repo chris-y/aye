@@ -1,15 +1,15 @@
 #include <stdint.h>
-#include <stdio.h>
+#include <malloc.h>
 #include <unistd.h>
 
-#include "zxay_read.h"
+#include "zxay_load.h"
 
 int main(int argc, char **argv)
 {
 	int c;
 	char *outfile = NULL;
 	char *infile = NULL;
-	struct zxay_file *zxay;
+	void *zxay;
 
 	printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
 		
