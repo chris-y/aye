@@ -19,8 +19,12 @@ struct zxay_file {
 	struct zxay_songdata **songdata;
 	struct zxay_songptrs **songptrs;
 	struct zxay_songblks **songblks;
+	char **datablks;
+	int32_t *datablk_size;
 	int16_t off_songstruct;
 	int16_t *off_songdata;
+	int16_t *off_songblks;
+	int16_t *songblkcount;
 };
 
 #endif

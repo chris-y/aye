@@ -55,6 +55,8 @@ struct zxay_songptrs {
 	char INTERRUPT[2];
 };
 
+#define OFFSET_OFFSET 4
+
 struct zxay_songblks {
 	char Address[2];
 	char Length[2];
