@@ -91,15 +91,16 @@ static struct zxay_songdata *aye_read_songdata(FILE *fp, int16_t songstructureof
 {
 	struct zxay_songdata *songdata = NULL;
 	size_t size = 0;
+	int16_t offset = 0;
 	
 	songstructure += (sizeof(struct zxay_song) * song);
-	*songdataoffset = readoffset(songstructure->PSongData, songstructureoffset + PSONGDATA_OFFSET + (sizeof(struct zxay_song) * song));
+	offset = readoffset(songstructure->PSongData, songstructureoffset + PSONGDATA_OFFSET + (sizeof(struct zxay_song) * song));
 
 	songdata = malloc(sizeof(struct zxay_songdata));
 	if(songdata == NULL) return NULL;
 	
-	if(fseek(fp, *songdataoffset, SEEK_SET) == 0) {
-		size = fread(songdata, sizeof(struct zxay_song), 1, fp);
+	if(fseek(fp, offset, SEEK_SET) == 0) {
+		size = fread(songdata, sizeof(struct zxay_songdata), 1, fp);
 	
 		if(size != 1) {
 			printf("Error reading song data\n");
@@ -108,6 +109,7 @@ static struct zxay_songdata *aye_read_songdata(FILE *fp, int16_t songstructureof
 		}
 	}
 	
+	*songdataoffset = offset;
 	return songdata;
 }
 
@@ -146,8 +148,6 @@ static struct zxay_songblks *aye_read_songdatablks(FILE *fp, int16_t *songblksof
 			size = fread(&tmpblk, sizeof(struct zxay_songblks), 1, fp);
 			blocks++;
 	
-			printf("blk %d addr 0x%x len 0x%x off 0x%x\n", blocks, zxay_read_int16(tmpblk.Address), zxay_read_int16(tmpblk.Length), zxay_read_int16(tmpblk.Offset));
-	
 			if(size != 1) {
 				printf("Error seeking song data blocks at count=%d \n", blocks);
 				return NULL;
@@ -173,7 +173,7 @@ static struct zxay_songblks *aye_read_songdatablks(FILE *fp, int16_t *songblksof
 	return songblks;
 }
 
-static char* aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numdatablocks, int32_t *datasize, struct zxay_songblks *songblks)
+static char *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numdatablocks, int32_t *datasize, struct zxay_songblks *songblks)
 {
 	char *datablock = NULL, *p = NULL;
 	size_t size = 0;
@@ -187,9 +187,8 @@ static char* aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 	for(i = 0; i < numdatablocks; i++) {
 		len = zxay_read_int16(songblk->Length);
 		addr = zxay_read_int16(songblk->Address);
-		printf("0x%x bytes at 0x%x\n", len, addr);
 		datasizetotal += len;
-		songblk += sizeof(struct zxay_songblks);
+		songblk ++;
 	}
 
 	datablock = calloc(datasizetotal, 1);
@@ -201,7 +200,6 @@ static char* aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 	for(i = 0; i < numdatablocks; i++) {
 		offset = readoffset(songblk->Offset, songblksoffset + OFFSET_OFFSET);
 		len = zxay_read_int16(songblk->Length);
-		
 		if(fseek(fp, offset, SEEK_SET) == 0) {
 			size = fread(p, len, 1, fp);
 			p += len;
@@ -212,7 +210,7 @@ static char* aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 				return NULL;
 			}
 		}
-		songblk += sizeof(struct zxay_songblks);
+		songblk ++;
 	}
 	
 	*datasize = datasizetotal;
