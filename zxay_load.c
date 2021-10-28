@@ -4,13 +4,7 @@
 
 #include "zxay_file.h"
 #include "zxay_load.h"
-
-static int16_t zxay_read_int16(char *val)
-{
-	int16_t i = 0;
-	i = (val[0] << 8) | val[1];
-	return i;
-}
+#include "zxay_misc.h"
 
 static int16_t readoffset(char *rel, int16_t addoffset)
 {
