@@ -333,12 +333,7 @@ void *zxay_load(char *filename)
 	if(fp = aye_open(filename)) {
 		if(zxay->header = aye_read_header(fp)) {
 			zxay->author = aye_read_author(fp, zxay->header);
-			printf("Author: %s\n", zxay->author);
 			zxay->misc = aye_read_misc(fp, zxay->header);
-			printf("Misc: %s\n", zxay->misc);
-			
-			printf("Tracks: %d\n", zxay->header->NumOfSongs + 1);
-			
 			zxay->songsstruct = aye_read_songstructure(fp, zxay->header, &zxay->off_songstruct);
 			zxay->songname = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(char *));
 			zxay->songdata = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(char *));
@@ -352,7 +347,6 @@ void *zxay_load(char *filename)
 			if(zxay->songname && zxay->songdata && zxay->songptrs && zxay->songblks) {
 				for(int i = 0; i <= zxay->header->NumOfSongs; i++) {
 					zxay->songname[i] = aye_read_songname(fp, zxay->off_songstruct, zxay->songsstruct, i);
-					printf(" %d: %s\n", i + 1, zxay->songname[i]);
 					zxay->songdata[i] = aye_read_songdata(fp, zxay->off_songstruct, &zxay->off_songdata[i], zxay->songsstruct, i);
 					zxay->songptrs[i] = aye_read_songptrs(fp, zxay->off_songdata[i], zxay->songdata[i]);
 					zxay->songblks[i] = aye_read_songdatablks(fp, &zxay->off_songblks[i], &zxay->songblkcount[i], zxay->off_songdata[i], zxay->songdata[i]);

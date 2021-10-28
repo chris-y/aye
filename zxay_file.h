@@ -8,6 +8,8 @@
 #ifndef ZXAY_FILE_H
 #define ZXAY_FILE_H 1
 
+#include <stdint.h>
+
 #include "zxay.h"
 
 struct zxay_file {

@@ -5,6 +5,7 @@
 
 #include "zxay_load.h"
 #include "zxay_dump.h"
+#include "zxay_peek.h"
 
 int main(int argc, char **argv)
 {
@@ -13,6 +14,8 @@ int main(int argc, char **argv)
 	char *infile = NULL;
 	bool debug = false;
 	void *zxay;
+	int i = 0;
+	char numsongs;
 
 	printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
 		
@@ -40,8 +43,21 @@ int main(int argc, char **argv)
 		printf("No file specified\n\n");
 		return 0;
 	}
+
+	printf("File: %s\n", infile);
 	
 	if(zxay = zxay_load(infile)) {
+
+		printf("Author: %s\n", zxay_peek(zxay, ZXAY_AUTHOR));
+		printf("Misc: %s\n", zxay_peek(zxay, ZXAY_MISC));
+
+		numsongs = zxay_peek(zxay, ZXAY_SONGCOUNT)[0];
+
+		printf("Tracks: %d\n", numsongs + 1);
+		
+		for(i = 0; i <= numsongs; i++) {
+			printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
+		}
 
 		if(debug) zxay_dump(zxay);
 
