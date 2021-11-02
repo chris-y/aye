@@ -13,6 +13,7 @@
 #include "zxay_load.h"
 #include "zxay_dump.h"
 #include "zxay_peek.h"
+#include "zxay_poke.h"
 #include "zxay_save.h"
 
 int main(int argc, char **argv)
@@ -20,13 +21,15 @@ int main(int argc, char **argv)
 	int c;
 	char *outfile = NULL;
 	char *infile = NULL;
+	char *newauthor = NULL;
+	char *newmisc = NULL;
 	bool debug = false;
 	bool quiet = false;
 	void *zxay;
 	int i = 0;
 	char numsongs;
 
-	while ((c = getopt(argc, argv, "hdqo:")) != -1) {
+	while ((c = getopt(argc, argv, "hdqa:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
@@ -34,6 +37,8 @@ int main(int argc, char **argv)
 				printf("Options:\n"
 				"  -h This help\n"
 				"  -q Quiet\n"
+				"  -a New author\n"
+				"  -m New misc\n"
 				"  -o Output file\n\n");
 				return 0;
 			break;
@@ -42,6 +47,12 @@ int main(int argc, char **argv)
 			break;
 			case 'q':
 				quiet = true;
+			break;
+			case 'a':
+				newauthor = optarg;
+			break;
+			case 'm':
+				newmisc = optarg;
 			break;
 			case 'o':
 				outfile = optarg;
@@ -77,9 +88,12 @@ int main(int argc, char **argv)
 				printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
 			}
 		}
-		
-		if(debug) zxay_dump(zxay);
 
+		if(debug) zxay_dump(zxay);
+		
+		if(newauthor) zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
+		if(newmisc) zxay_poke(zxay, ZXAY_MISC, newmisc);
+	
 		if(outfile) zxay_save(zxay, outfile);
 
 		zxay_free(zxay);
