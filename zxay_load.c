@@ -188,7 +188,7 @@ static char *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 	
 	for(i = 0; i < numdatablocks; i++) {
 		offset = readoffset(songblk->Offset, songblksoffset + OFFSET_OFFSET);
-		printf("offset: %x %x + %x = calc offset: %x\n", songblk->Offset[0], songblk->Offset[1], songblksoffset + OFFSET_OFFSET, offset);
+		//printf("offset: %x %x + %x = calc offset: %x\n", songblk->Offset[0], songblk->Offset[1], songblksoffset + OFFSET_OFFSET, offset);
 		len = zxay_read_int16(songblk->Length);
 		if(fseek(fp, offset, SEEK_SET) == 0) {
 			size = fread(p, len, 1, fp);
