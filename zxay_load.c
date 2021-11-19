@@ -175,7 +175,7 @@ static char *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 		len = zxay_read_int16(songblk->Length);
 		addr = zxay_read_int16(songblk->Address);
 		datasizetotal += len;
-		songblk ++;
+		songblk++;
 	}
 
 	datablock = calloc(datasizetotal, 1);

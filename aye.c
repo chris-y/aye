@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <malloc.h>
 #include <unistd.h>
@@ -23,13 +24,13 @@ int main(int argc, char **argv)
 	char *infile = NULL;
 	char *newauthor = NULL;
 	char *newmisc = NULL;
-	bool debug = false;
+	int debug = 0;
 	bool quiet = false;
 	void *zxay;
 	int i = 0;
 	char numsongs;
 
-	while ((c = getopt(argc, argv, "hdqa:o:")) != -1) {
+	while ((c = getopt(argc, argv, "hqd:a:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
@@ -43,7 +44,7 @@ int main(int argc, char **argv)
 				return 0;
 			break;
 			case 'd':
-				debug = true;
+				debug = atoi(optarg);
 			break;
 			case 'q':
 				quiet = true;
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(debug) zxay_dump(zxay);
+		if(debug) zxay_dump(zxay, debug);
 		
 		if(newauthor) zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
 		if(newmisc) zxay_poke(zxay, ZXAY_MISC, newmisc);

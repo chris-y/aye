@@ -21,7 +21,7 @@ static void dump(char *structure, size_t size)
 	printf("\n");
 }
 
-void zxay_dump(void *zxayemul)
+void zxay_dump(void *zxayemul, int level)
 {
 	struct zxay_file *zxay = (struct zxay_file *)zxayemul;
 	int i = 0;
@@ -45,6 +45,10 @@ void zxay_dump(void *zxayemul)
 			printf("    Block %d: ", b);
 			dump(blk, sizeof(struct zxay_songblks));
 			blk += sizeof(struct zxay_songblks);
+		}
+		if(level > 1) {
+			printf("    All block data: \n", b);
+			dump((char *)zxay->datablks[i], zxay->datablk_size[i]);
 		}
 	}
 }
