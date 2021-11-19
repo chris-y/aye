@@ -95,7 +95,10 @@ int main(int argc, char **argv)
 		if(newauthor) zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
 		if(newmisc) zxay_poke(zxay, ZXAY_MISC, newmisc);
 	
-		if(outfile) zxay_save(zxay, outfile);
+		if(outfile) {
+			printf("\nOutput: %s\n", outfile);
+			zxay_save(zxay, outfile);
+		}
 
 		zxay_free(zxay);
 	}

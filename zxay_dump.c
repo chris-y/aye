@@ -34,14 +34,14 @@ void zxay_dump(void *zxayemul, int level)
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
 		printf("Track %d:\n", i);
 		printf("  Song struct: ");
-		dump((char *)(zxay->songsstruct + (sizeof(struct zxay_song) * i)), sizeof(struct zxay_song));
+		dump((char *)(zxay->songsstruct + i), sizeof(struct zxay_song));
 		printf("  Song data: ");
 		dump((char *)zxay->songdata[i], sizeof(struct zxay_songdata));
 		printf("  Song ptrs: ");
 		dump((char *)zxay->songptrs[i], sizeof(struct zxay_songptrs));
 		printf("  Song blks:\n");
 		blk = (char *)zxay->songblks[i];
-		for(b = 0; b < zxay->songblkcount[i]; b++) {
+		for(b = 0; b < (zxay->songblkcount[i]); b++) {
 			printf("    Block %d: ", b);
 			dump(blk, sizeof(struct zxay_songblks));
 			blk += sizeof(struct zxay_songblks);

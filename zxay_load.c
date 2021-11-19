@@ -139,7 +139,9 @@ static struct zxay_songblks *aye_read_songdatablks(FILE *fp, int16_t *songblksof
 				printf("Error seeking song data blocks at count=%d \n", blocks);
 				return NULL;
 			}
-		} while((tmpblk.Address[0] != 0) && (tmpblk.Address[1] != 0));
+			
+			//printf("%x %x\n", tmpblk.Address[0], tmpblk.Address[1]);
+		} while((tmpblk.Address[0] != 0) || (tmpblk.Address[1] != 0));
 	}
 
 	songblks = calloc(sizeof(struct zxay_songblks), blocks);
@@ -156,7 +158,7 @@ static struct zxay_songblks *aye_read_songdatablks(FILE *fp, int16_t *songblksof
 	}
 	
 	*songblksoffset = offset;
-	*numdatablocks = blocks;
+	*numdatablocks = (blocks - 1);
 	return songblks;
 }
 
@@ -186,6 +188,7 @@ static char *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 	
 	for(i = 0; i < numdatablocks; i++) {
 		offset = readoffset(songblk->Offset, songblksoffset + OFFSET_OFFSET);
+		printf("offset: %x %x + %x = calc offset: %x\n", songblk->Offset[0], songblk->Offset[1], songblksoffset + OFFSET_OFFSET, offset);
 		len = zxay_read_int16(songblk->Length);
 		if(fseek(fp, offset, SEEK_SET) == 0) {
 			size = fread(p, len, 1, fp);
@@ -203,7 +206,6 @@ static char *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int16_t numda
 	*datasize = datasizetotal;
 	return datablock;
 }
-
 
 static struct zxay_song *aye_read_songstructure(FILE *fp, struct zxay_header *header, int16_t *offset)
 {
@@ -315,7 +317,6 @@ void *zxay_load(char *filename)
 	struct zxay_file *zxay = NULL;
 
 	zxay = calloc(1, sizeof(struct zxay_file));
-
 	if(zxay == NULL) return NULL;
 
 	if(fp = aye_open(filename)) {
@@ -331,6 +332,7 @@ void *zxay_load(char *filename)
 			zxay->off_songdata = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(int16_t *));
 			zxay->off_songblks = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(int16_t *));
 			zxay->songblkcount = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(int16_t *));
+			zxay->datablk_size = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(int32_t *));
 			zxay->datablk_size = calloc(1, (zxay->header->NumOfSongs + 1) * sizeof(int32_t *));
 			if(zxay->songsstruct &&
 					zxay->songname &&
@@ -351,13 +353,19 @@ void *zxay_load(char *filename)
 				}
 			} else {
 				printf("Unable to allocate memory\n");
+				free(zxay);
+				zxay = NULL;
 			}
 		} else {
 			printf("Error reading header\n");
+			free(zxay);
+			zxay = NULL;
 		}
 		aye_close(fp);
 	} else {
 		printf("Error opening file\n");
+		free(zxay);
+		zxay = NULL;
 	}
 
 	return (void *)zxay;
