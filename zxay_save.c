@@ -13,7 +13,7 @@
 #include "zxay_save.h"
 #include "zxay_misc.h"
 
-static void zxay_write(FILE *fp, char *structure, size_t size)
+static void zxay_write(FILE *fp, uint8_t *structure, size_t size)
 {
 	int i = 0;
 	for(i = 0; i < size; i++) {
@@ -23,10 +23,10 @@ static void zxay_write(FILE *fp, char *structure, size_t size)
 	//printf("\n");
 }
 
-static void zxay_put_int16(int16_t val, char *dest)
+static void zxay_put_int16(int16_t val, uint8_t *dest)
 {
-	dest[0] = (char)(val >> 8);
-	dest[1] = (char)(val);
+	dest[0] = (uint8_t)(val >> 8);
+	dest[1] = (uint8_t)(val);
 }
 
 bool zxay_save(void *zxayemul, char *filename)
@@ -61,9 +61,9 @@ bool zxay_save(void *zxayemul, char *filename)
 	
 	zxay_put_int16(sizeof(struct zxay_header) - PSONGSSTRUCTURE_OFFSET + extra_data, zxay->header->PSongsStructure);
 	
-	zxay_write(fp, (char *)zxay->header, sizeof(struct zxay_header));
-	zxay_write(fp, (char *)zxay->author, strlen(zxay->author) + 1);
-	zxay_write(fp, (char *)zxay->misc, strlen(zxay->misc) + 1);
+	zxay_write(fp, (uint8_t *)zxay->header, sizeof(struct zxay_header));
+	zxay_write(fp, (uint8_t *)zxay->author, strlen(zxay->author) + 1);
+	zxay_write(fp, (uint8_t *)zxay->misc, strlen(zxay->misc) + 1);
 
 	/* SongsStructure
 	 * SongName }
@@ -122,20 +122,20 @@ bool zxay_save(void *zxayemul, char *filename)
 		//printf("es: %x \n" ,extra_songblks);
 	}
 
-	zxay_write(fp, (char *)zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1));	
+	zxay_write(fp, (uint8_t *)zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1));	
 	
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
-		zxay_write(fp, (char *)zxay->songname[i], strlen(zxay->songname[i]) + 1);
-		zxay_write(fp, (char *)zxay->songdata[i], sizeof(struct zxay_songdata));
+		zxay_write(fp, (uint8_t *)zxay->songname[i], strlen(zxay->songname[i]) + 1);
+		zxay_write(fp, (uint8_t *)zxay->songdata[i], sizeof(struct zxay_songdata));
 	}
 	
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
-		zxay_write(fp, (char *)zxay->songptrs[i], sizeof(struct zxay_songptrs));
-		zxay_write(fp, (char *)zxay->songblks[i], sizeof(struct zxay_songblks) * (zxay->songblkcount[i] + 2));
+		zxay_write(fp, (uint8_t *)zxay->songptrs[i], sizeof(struct zxay_songptrs));
+		zxay_write(fp, (uint8_t *)zxay->songblks[i], sizeof(struct zxay_songblks) * (zxay->songblkcount[i] + 2));
 	}
 		
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
-		zxay_write(fp, (char *)zxay->datablks[i], zxay->datablk_size[i]);
+		zxay_write(fp, (uint8_t *)zxay->datablks[i], zxay->datablk_size[i]);
 	}
 	
 	fclose(fp);
