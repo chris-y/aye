@@ -8,5 +8,5 @@
 #ifndef ZXAY_MISC_H
 #define ZXAY_MISC_H 1
 
-int16_t zxay_read_int16(char *val);
+int16_t zxay_read_int16(uint8_t *val);
 #endif

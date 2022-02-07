@@ -11,14 +11,20 @@
 #include "zxay_dump.h"
 #include "zxay_file.h"
 
-static void dump(char *structure, size_t size)
+static uint32_t offset = 0;
+
+static void dump(uint8_t *structure, size_t size)
 {
 	int i = 0;
+
+	printf("[%04x] ", offset);
+
 	for(i = 0; i < size; i++) {
 		printf("%02x ", structure[i]);
 	}
 	
 	printf("\n");
+	offset += size;
 }
 
 void zxay_dump(void *zxayemul, int level)
@@ -49,6 +55,8 @@ void zxay_dump(void *zxayemul, int level)
 		if(level > 1) {
 			printf("    All block data: \n", b);
 			dump((char *)zxay->datablks[i], zxay->datablk_size[i]);
+		} else {
+			offset += zxay->datablk_size[i];
 		}
 	}
 }
