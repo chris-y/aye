@@ -1,5 +1,5 @@
 /* AYE ZXAYEMUL metadata editor
- * by Chris Young 2021
+ * by Chris Young 2021, 2022
  * https://www.unsatisfactorysoftware.co.uk
  */
 

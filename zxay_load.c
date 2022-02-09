@@ -1,3 +1,10 @@
+/* AYE ZXAYEMUL metadata editor
+ * by Chris Young 2021, 2022
+ * https://www.unsatisfactorysoftware.co.uk
+ */
+ 
+/* ZXAY load routines */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <malloc.h>

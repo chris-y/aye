@@ -1,6 +1,6 @@
 /* AYE
  * ZXAYEMUL metadata editor
- * (c) Chris Young 2021
+ * (c) Chris Young 2021, 2022
  * https://www.unsatisfactorysoftware.co.uk
  */
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "hqd:a:o:")) != -1) {
 		switch(c) {
 			case 'h':
-				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
+				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n");
 				printf("aye [OPTIONS] [INPUT]\n\n");
 				printf("Options:\n"
 				"  -h This help\n"
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	}
 
 	if(!quiet) {
-		printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021\n\n");
+		printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n");
 		printf("File: %s\n", infile);
 	}
 
