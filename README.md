@@ -2,6 +2,7 @@
 ZXAY metadata editor
 
 # Usage
+```
 aye [args] [infile]
 
 args = 
@@ -9,8 +10,10 @@ args =
 -o  Output
 -a  New author
 -m  New misc
+-d  Debug
 
 infile = Input ZXAYEMUL file
+```
 
 If no options are specified the information and and song list from the file will be dumped to output.
 
@@ -18,3 +21,9 @@ If -o is specified the input file will be parsed and written to the output file.
 NB: At the moment ZXAYEMUL files containing multiple songs do not parse correctly and haven't been tested properly.
 
 If -a and/or -m are specified the relevant information fields will be changed to those provided on the command line.  Without an output file this does nothing.
+
+-d dumps the data for debugging purposes. 0 = none,
+1 = basic dump of read data, 
+2 = basic dump of read and saved data, 
+3 = full dump of read data, basic dump of save data
+
