@@ -22,15 +22,12 @@ static void dump(uint8_t *structure, size_t size, int type)
 
 	for(i = 0; i < size; i++) {
 		printf("%02x ", structure[i]);
-
-		switch(type) {
-			case ZXAY_S_HEADER:
-				if((i == (PAUTHOR_OFFSET + 1)) || (i == (PMISC_OFFSET + 1)) || (i == (PSONGSSTRUCTURE_OFFSET + 1))) {
-					printf("{%04x} ", zxay_read_int16(structure + i - 1) + (offset + i - 1));
-				}
-			break;
+		if(((type == ZXAY_S_HEADER) && ((i == (PAUTHOR_OFFSET + 1)) || (i == (PMISC_OFFSET + 1)) || (i == (PSONGSSTRUCTURE_OFFSET + 1)))) ||
+			((type == ZXAY_S_SONG) && ((i == (PSONGNAME_OFFSET + 1)) || (i == (PSONGDATA_OFFSET + 1)))) ||
+                        ((type == ZXAY_S_SONGDATA) && ((i == (PPOINTS_OFFSET + 1)) || (i == (PADDRESSES_OFFSET + 1)))) ||
+                        ((type == ZXAY_S_BLKS) && ((i == (OFFSET_OFFSET + 1)))) ) {
+			printf("{%04x} ", zxay_read_int16(structure + i - 1) + (offset + i - 1));
 		}
-
 	}
 	
 	printf("\n");
