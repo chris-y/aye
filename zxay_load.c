@@ -158,7 +158,7 @@ static struct zxay_songblks *aye_read_songdatablks(FILE *fp, int16_t *songblksof
 	}
 	
 	*songblksoffset = offset;
-	*numdatablocks = (blocks - 1);
+	*numdatablocks = blocks - 1;
 	return songblks;
 }
 
