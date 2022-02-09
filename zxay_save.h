@@ -11,6 +11,6 @@
 #include <stdbool.h>
 
 /* Save a file */
-bool zxay_save(void *zxayemul, char *filename);
+bool zxay_save(void *zxayemul, char *filename, int debug);
 
 #endif

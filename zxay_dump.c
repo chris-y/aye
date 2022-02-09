@@ -14,17 +14,11 @@
 
 static uint32_t offset = 0;
 
-enum {
-	ZXAY_S_NONE = 0,
-	ZXAY_S_HEADER
-};
-
-
 static void dump(uint8_t *structure, size_t size, int type)
 {
 	int i = 0;
 
-	printf("[%04x] ", offset);
+	if(type > 0) printf("[%04x] ", offset);
 
 	for(i = 0; i < size; i++) {
 		printf("%02x ", structure[i]);
@@ -40,7 +34,13 @@ static void dump(uint8_t *structure, size_t size, int type)
 	}
 	
 	printf("\n");
-	offset += size;
+	if(type > 0) offset += size;
+}
+
+void zxay_dump_struct(uint8_t *structure, size_t size, int type)
+{
+	if(type == ZXAY_S_NONE) type = ZXAY_S_UNKNOWN;
+	dump(structure, size, type);
 }
 
 void zxay_dump(void *zxayemul, int level)
@@ -51,7 +51,7 @@ void zxay_dump(void *zxayemul, int level)
 	char *blk = NULL;
 	
 	printf("Header: ");
-	dump((char *)zxay->header, sizeof(struct zxay_header), ZXAY_S_HEADER);
+	dump((char *)zxay->header, sizeof(struct zxay_header), 0);
 	
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
 		printf("Track %d:\n", i);
@@ -68,11 +68,9 @@ void zxay_dump(void *zxayemul, int level)
 			dump(blk, sizeof(struct zxay_songblks), 0);
 			blk += sizeof(struct zxay_songblks);
 		}
-		if(level > 1) {
+		if(level > 2) {
 			printf("    All block data: \n", b);
 			dump((char *)zxay->datablks[i], zxay->datablk_size[i], 0);
-		} else {
-			offset += zxay->datablk_size[i];
 		}
 	}
 }

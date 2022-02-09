@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 	
 		if(outfile) {
 			printf("\nOutput: %s\n", outfile);
-			zxay_save(zxay, outfile);
+			zxay_save(zxay, outfile, debug);
 		}
 
 		zxay_free(zxay);
