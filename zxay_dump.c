@@ -70,7 +70,7 @@ void zxay_dump(void *zxayemul, int level)
 			blk += sizeof(struct zxay_songblks);
 		}
 		if(level > 2) {
-			printf("    All block data: \n", b);
+			printf("    All block data: \n");
 			dump((char *)zxay->datablks[i], zxay->datablk_size[i], 0);
 		}
 	}
