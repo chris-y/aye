@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 	int i = 0;
 	char numsongs;
 
-	while ((c = getopt(argc, argv, "hqd:a:o:")) != -1) {
+	while ((c = getopt(argc, argv, "hqd:a:m:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n");
