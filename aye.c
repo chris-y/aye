@@ -3,6 +3,8 @@
  * (c) Chris Young 2021, 2022
  * https://www.unsatisfactorysoftware.co.uk
  */
+ 
+#define AYECOPYVER "AYE 1.0+git\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -33,7 +35,7 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "hqd:a:m:o:")) != -1) {
 		switch(c) {
 			case 'h':
-				printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n");
+				printf(AYECOPYVER);
 				printf("aye [OPTIONS] [INPUT]\n\n");
 				printf("Options:\n"
 				"  -h This help\n"
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
 	}
 
 	if(!quiet) {
-		printf("AYE 1.0\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n");
+		printf(AYECOPYVER);
 		printf("File: %s\n", infile);
 	}
 
