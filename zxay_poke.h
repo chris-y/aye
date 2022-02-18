@@ -12,5 +12,5 @@
 
 /* Poke a file */
 void zxay_poke(void *zxayemul, int type, char *newvalue);
-
+void zxay_poke_track(void *zxayemul, int song, int type, char *newvalue);
 #endif

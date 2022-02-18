@@ -28,3 +28,15 @@ void zxay_poke(void *zxayemul, int type, char *newvalue)
 		break;
 	}
 }
+
+void zxay_poke_track(void *zxayemul, int song, int type, char *newvalue)
+{
+	struct zxay_file *zxay = (struct zxay_file *)zxayemul;
+
+	switch(type) {
+		case ZXAY_SONG_NAME:
+			if(zxay->songname[song]) free(zxay->songname[song]);
+			zxay->songname[song] = strdup(newvalue);
+		break;
+	}
+}

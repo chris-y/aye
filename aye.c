@@ -26,13 +26,15 @@ int main(int argc, char **argv)
 	char *infile = NULL;
 	char *newauthor = NULL;
 	char *newmisc = NULL;
+	char *newtitle = NULL;
+	int song = 0;
 	int debug = 0;
 	bool quiet = false;
 	void *zxay;
 	int i = 0;
 	char numsongs;
 
-	while ((c = getopt(argc, argv, "hqd:a:m:o:")) != -1) {
+	while ((c = getopt(argc, argv, "hqd:s:a:m:t:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf(AYECOPYVER);
@@ -40,8 +42,10 @@ int main(int argc, char **argv)
 				printf("Options:\n"
 				"  -h This help\n"
 				"  -q Quiet\n"
+				"  -s Song number\n"
 				"  -a New author\n"
 				"  -m New misc\n"
+				"  -t New title\n"
 				"  -o Output file\n\n");
 				return 0;
 			break;
@@ -57,6 +61,12 @@ int main(int argc, char **argv)
 			case 'm':
 				newmisc = optarg;
 			break;
+			case 's':
+				song = atoi(optarg);
+			break;
+			case 't':
+				newtitle = optarg;
+			break;
 			case 'o':
 				outfile = optarg;
 			break;
@@ -68,7 +78,7 @@ int main(int argc, char **argv)
 	}
 	
 	if(infile == NULL) {
-		printf("No file specified\n\n");
+		printf("ERROR: No file specified\n\n");
 		return 0;
 	}
 
@@ -76,6 +86,11 @@ int main(int argc, char **argv)
 		printf(AYECOPYVER);
 		printf("File: %s\n", infile);
 	}
+
+        if(newtitle && (song == 0)) {
+                printf("\nWARNING: New title specified without -s, ignoring.\n\n");
+                newtitle = NULL;
+        }
 
 	if(zxay = zxay_load(infile)) {
 
@@ -96,7 +111,14 @@ int main(int argc, char **argv)
 		
 		if(newauthor) zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
 		if(newmisc) zxay_poke(zxay, ZXAY_MISC, newmisc);
-	
+		if(newtitle) {
+			song -= 1; /* First track is 0 */
+			if(song <= numsongs) {
+				zxay_poke_track(zxay, song, ZXAY_SONG_NAME, newtitle);
+			} else {
+				printf("\n\nWARNING: Invalid song specified, not changing.\n\n");
+			}
+		}
 		if(outfile) {
 			printf("\nOutput: %s\n", outfile);
 			zxay_save(zxay, outfile, debug);
@@ -107,4 +129,3 @@ int main(int argc, char **argv)
 	
 	return 0;
 }
-
