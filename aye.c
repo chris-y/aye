@@ -4,7 +4,7 @@
  * https://www.unsatisfactorysoftware.co.uk
  */
  
-#define AYECOPYVER "AYE 1.0+git\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n"
+#define AYECOPYVER "AYE 1.1\nZXAYEMUL metadata editor by Chris Young 2021, 2022\n\n"
 
 #include <stdio.h>
 #include <stdint.h>
