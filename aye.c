@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 	int song = 0;
 	int debug = 0;
 	bool quiet = false;
+	bool updates = false;
 	void *zxay;
 	int i = 0;
 	char numsongs;
@@ -92,6 +93,8 @@ int main(int argc, char **argv)
                 newtitle = NULL;
         }
 
+	if(newauthor || newmisc || newtitle) updates = true;
+
 	if(zxay = zxay_load(infile)) {
 
 		if(!quiet) {
@@ -108,24 +111,36 @@ int main(int argc, char **argv)
 		}
 
 		if(debug) zxay_dump(zxay, debug);
-		
-		if(newauthor) zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
-		if(newmisc) zxay_poke(zxay, ZXAY_MISC, newmisc);
+		if(updates && (!quiet)) printf("\nNew metadata:\n");
+
+		if(newauthor) {
+			if(!quiet) printf("  Author: %s\n", newauthor);
+			zxay_poke(zxay, ZXAY_AUTHOR, newauthor);
+		}
+		if(newmisc) {
+			if(!quiet) printf("  Misc: %s\n", newmisc);
+			zxay_poke(zxay, ZXAY_MISC, newmisc);
+		}
 		if(newtitle) {
 			song -= 1; /* First track is 0 */
 			if(song <= numsongs) {
+				if(!quiet) printf("  Track %d: %s\n", song + 1, newtitle);
 				zxay_poke_track(zxay, song, ZXAY_SONG_NAME, newtitle);
 			} else {
-				printf("\n\nWARNING: Invalid song specified, not changing.\n\n");
+				printf("WARNING: Invalid song (%d/%d) specified.\n", song + 1, numsongs + 1);
 			}
 		}
 		if(outfile) {
-			printf("\nOutput: %s\n", outfile);
+			if(!quiet) printf("\nOutput: %s\n", outfile);
 			zxay_save(zxay, outfile, debug);
+		} else {
+			if(updates) {
+				printf("WARNING: No output file specified; changes have not been saved.\n");
+			}
 		}
 
 		zxay_free(zxay);
 	}
-	
+
 	return 0;
 }
