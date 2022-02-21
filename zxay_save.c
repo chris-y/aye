@@ -136,7 +136,9 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	}
 		
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
-		zxay_write(fp, (uint8_t *)zxay->datablks[i], zxay->datablk_size[i], debug, ZXAY_S_DATA);
+		for(uint32_t n = 0; n < zxay->songblkcount[i]; n++) {
+			zxay_write(fp, (uint8_t *)zxay->datablocks[i]->data[n], zxay->datablocks[i]->len[n], debug, ZXAY_S_DATA);
+		}
 	}
 	
 	fclose(fp);

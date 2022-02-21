@@ -68,10 +68,13 @@ void zxay_dump(void *zxayemul, int level)
 			printf("    Block %d: ", b);
 			dump(blk, sizeof(struct zxay_songblks), 0);
 			blk += sizeof(struct zxay_songblks);
-		}
-		if(level > 2) {
-			printf("    All block data: \n");
-			dump((char *)zxay->datablks[i], zxay->datablk_size[i], 0);
+
+			if(level > 2) {
+				printf("    Data: \n");
+				if(zxay->datablocks[i]->len[b] != 0) {
+					dump((char *)zxay->datablocks[i]->data[b], zxay->datablocks[i]->len[b], 0);
+				}
+			}
 		}
 	}
 }

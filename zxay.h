@@ -63,7 +63,4 @@ struct zxay_songblks {
 	char Offset[2];
 };
 
-	
-	
-
 #endif
