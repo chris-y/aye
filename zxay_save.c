@@ -18,8 +18,11 @@
 static void zxay_write(FILE *fp, uint8_t *structure, size_t size, int debug, int type)
 {
 	int i = 0;
-	for(i = 0; i < size; i++) {
-		fputc(structure[i], fp);
+
+	if(size > 0) {
+		for(i = 0; i < size; i++) {
+			fputc(structure[i], fp);
+		}
 	}
 
 	if(debug > 1) zxay_dump_struct(structure, size, type);
@@ -45,7 +48,9 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	
 	fp = fopen(filename, "wb");
 	if(fp == NULL) return false;
-	
+
+	zxay_data_dedupe(zxay);
+
 	/* Header
 	 * Author
 	 * Misc

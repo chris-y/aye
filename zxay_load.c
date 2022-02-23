@@ -184,6 +184,10 @@ struct zxay_datablks *aye_read_datablocks(FILE *fp, int16_t songblksoffset, int1
 	if(datablks->data == NULL) return NULL;
 	datablks->len = calloc(1, sizeof(uint32_t *));
 	if(datablks->len == NULL) return NULL;
+        datablks->song = calloc(1, sizeof(uint8_t *));
+        if(datablks->song == NULL) return NULL;
+        datablks->block = calloc(1, sizeof(uint32_t *));
+        if(datablks->block == NULL) return NULL;
 
 	for(i = 0; i < numdatablocks; i++) {
 		len = zxay_read_int16(songblk->Length);
