@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "zxay_data.h"
 #include "zxay_dump.h"
 #include "zxay_file.h"
 #include "zxay_save.h"
@@ -111,9 +112,9 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 		blk = zxay->songblks[i];
 		for(b = 0; b <= (zxay->songblkcount[i] + 1); b++) {
 			if(!((blk->Address[0] == 0) && (blk->Address[1] == 0))) {
-				//printf("es: %d b: %x size: %x ed: %x blkcount:%d\n" ,extra_songblks, b, sizeof(struct zxay_songblks), extra_data, zxay->songblkcount[i]);
-				zxay_put_int16(extra_songblks - (b * sizeof(struct zxay_songblks)) - OFFSET_OFFSET + extra_data, blk->Offset);
-				extra_data += zxay_read_int16(blk->Length);
+				//printf("es: %d b: %x size: %x ed: %x blkcount:%d do: %d\n" ,extra_songblks, b, sizeof(struct zxay_songblks), extra_data, zxay->songblkcount[i], zxay_data_offset(zxay, i, b));
+				zxay_put_int16(extra_songblks - (b * sizeof(struct zxay_songblks)) - OFFSET_OFFSET + extra_data + zxay_data_offset(zxay, i, b), blk->Offset);
+				//extra_data += zxay_read_int16(blk->Length);
 			}
 			blk++;
 		}
