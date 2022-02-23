@@ -19,20 +19,22 @@ static void dump(uint8_t *structure, size_t size, int type)
 	int i = 0;
 	int j = 0;
 
-	if(type > 0) printf("[%04x] ", offset);
+	if(size > 0) {
+		if(type > 0) printf("[%04x] ", offset);
 
-	for(i = 0; i < size; i++) {
-		printf("%02x ", structure[i]);
-		if(((type == ZXAY_S_HEADER) && ((i == (PAUTHOR_OFFSET + 1)) || (i == (PMISC_OFFSET + 1)) || (i == (PSONGSSTRUCTURE_OFFSET + 1)))) ||
-			((type == ZXAY_S_SONG) && (((i - (sizeof(struct zxay_song) * j)) == (PSONGNAME_OFFSET + 1)) || ((i - (sizeof(struct zxay_song) * j)) == (PSONGDATA_OFFSET + 1)))) ||
-                        ((type == ZXAY_S_SONGDATA) && ((i == (PPOINTS_OFFSET + 1)) || (i == (PADDRESSES_OFFSET + 1)))) ||
-                        ((type == ZXAY_S_BLKS) && (((i - (sizeof(struct zxay_songblks) * j)) == (OFFSET_OFFSET + 1)))) ) {
-			printf("{%04x} ", zxay_read_int16(structure + i - 1) + (offset + i - 1));
-			if((type == ZXAY_S_BLKS) || (type == ZXAY_S_SONG)) j++;
+		for(i = 0; i < size; i++) {
+			printf("%02x ", structure[i]);
+			if(((type == ZXAY_S_HEADER) && ((i == (PAUTHOR_OFFSET + 1)) || (i == (PMISC_OFFSET + 1)) || (i == (PSONGSSTRUCTURE_OFFSET + 1)))) ||
+				((type == ZXAY_S_SONG) && (((i - (sizeof(struct zxay_song) * j)) == (PSONGNAME_OFFSET + 1)) || ((i - (sizeof(struct zxay_song) * j)) == (PSONGDATA_OFFSET + 1)))) ||
+                        	((type == ZXAY_S_SONGDATA) && ((i == (PPOINTS_OFFSET + 1)) || (i == (PADDRESSES_OFFSET + 1)))) ||
+	                        ((type == ZXAY_S_BLKS) && (((i - (sizeof(struct zxay_songblks) * j)) == (OFFSET_OFFSET + 1)))) ) {
+				printf("{%04x} ", zxay_read_int16(structure + i - 1) + (offset + i - 1));
+				if((type == ZXAY_S_BLKS) || (type == ZXAY_S_SONG)) j++;
+			}
 		}
-	}
 
-	if(type == ZXAY_S_TEXT) printf("\n       {%s}", structure);
+		if(type == ZXAY_S_TEXT) printf("\n       {%s}", structure);
+	}
 
 	printf("\n");
 	if(type > 0) offset += size;
@@ -68,10 +70,13 @@ void zxay_dump(void *zxayemul, int level)
 			printf("    Block %d: ", b);
 			dump(blk, sizeof(struct zxay_songblks), 0);
 			blk += sizeof(struct zxay_songblks);
-		}
-		if(level > 2) {
-			printf("    All block data: \n");
-			dump((char *)zxay->datablks[i], zxay->datablk_size[i], 0);
+
+			if(level > 2) {
+				printf("    Data: ");
+				if(zxay->datablocks[i]->len[b] != 0) {
+					dump((char *)zxay->datablocks[i]->data[b], zxay->datablocks[i]->len[b], 0);
+				}
+			}
 		}
 	}
 }

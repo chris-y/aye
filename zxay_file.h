@@ -12,6 +12,14 @@
 
 #include "zxay.h"
 
+/* structure for storing data blocks */
+struct zxay_datablks {
+        uint8_t **data;
+        uint32_t *len; /* if zero, use song+block below */
+        uint32_t *song;
+        uint32_t *block;
+};
+
 struct zxay_file {
 	struct zxay_header *header;
 	struct zxay_song *songsstruct;
@@ -21,8 +29,7 @@ struct zxay_file {
 	struct zxay_songdata **songdata;
 	struct zxay_songptrs **songptrs;
 	struct zxay_songblks **songblks;
-	uint8_t **datablks;
-	int32_t *datablk_size;
+	struct zxay_datablks **datablocks;
 	int16_t off_songstruct;
 	int16_t *off_songdata;
 	int16_t *off_songblks;
