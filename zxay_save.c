@@ -25,7 +25,11 @@ static void zxay_write(FILE *fp, uint8_t *structure, size_t size, int debug, int
 		}
 	}
 
-	if(debug > 1) zxay_dump_struct(structure, size, type);
+	if(type == ZXAY_S_DATA) {
+		if(debug > 3) zxay_dump_struct(structure, size, type);
+	} else {
+		if(debug > 1) zxay_dump_struct(structure, size, type);
+	}
 }
 
 static void zxay_put_int16(int16_t val, uint8_t *dest)
@@ -52,7 +56,7 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 
 	squashed = zxay_data_dedupe(zxay);
 
-	if(debug > 1) printf("Duplicate blocks squashed: %d\n", squashed);
+	if(debug > 1) printf("Duplicate blocks: %d\n\n", squashed);
 
 	/* Header
 	 * Author

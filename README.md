@@ -23,7 +23,11 @@ If -o is specified the input file will be parsed and written to the output file.
 
 If -a, -m and/or -t are specified the relevant information fields will be changed to those provided on the command line.  Without an output file this does nothing.
 
--d dumps the data for debugging purposes. 0 = none,
-1 = basic dump of read data, 
-2 = basic dump of read and saved data, 
-3 = full dump of read data, basic dump of save data
+-d dumps the data for debugging purposes:
+```
+0 = none (default)
+1 = basic dump of read data 
+2 = basic dump of read and saved data 
+3 = full dump of read data, basic dump of save data 
+4 = full dump of read data, full dump of save data
+```
