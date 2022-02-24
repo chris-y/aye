@@ -40,6 +40,7 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	struct zxay_file *zxay = (struct zxay_file *)zxayemul;
 	int i = 0;
 	int b = 0;
+	uint32_t squashed = 0;
 	struct zxay_songblks *blk = NULL;
 	struct zxay_song *song = NULL;
 	
@@ -49,7 +50,9 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	fp = fopen(filename, "wb");
 	if(fp == NULL) return false;
 
-	zxay_data_dedupe(zxay);
+	squashed = zxay_data_dedupe(zxay);
+
+	if(debug > 1) printf("Duplicate blocks squashed: %d\n", squashed);
 
 	/* Header
 	 * Author
