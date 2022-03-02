@@ -25,10 +25,11 @@ static int32_t compare_block(uint8_t *a, uint8_t *b, uint32_t alen, uint32_t ble
 	return offset;
 }
 
-static bool check_dupe(struct zxay_file *zxay, int song, int block)
+static uint16_t check_dupe(struct zxay_file *zxay, int song, int block)
 {
 	int s;
         int b;
+	uint16_t found = 0;
 
 	if(zxay->datablocks[song]->len[block] == 0) return false;
 
@@ -41,24 +42,25 @@ static bool check_dupe(struct zxay_file *zxay, int song, int block)
 				zxay->datablocks[s]->len[b] = 0;
 				zxay->datablocks[s]->song[b] = song;
 				zxay->datablocks[s]->block[b] = block;
-				return true;
+				found++;
 			}
                 }
         }
 
-	return false;
+	return found;
 }
 
-uint32_t zxay_data_dedupe(void *zxayemul)
+uint16_t zxay_data_dedupe(void *zxayemul)
 {
 	struct zxay_file *zxay = (struct zxay_file *)zxayemul;
 	int s;
 	int b;
-	uint32_t count = 0;
+	uint16_t c = 0;
+	uint16_t count = 0;
 
 	for(s = 0; s <= zxay->header->NumOfSongs; s++) {
 		for(b = 0; b < zxay->songblkcount[s]; b++) {
-			if(check_dupe(zxay, s, b)) count++;
+			if(c = check_dupe(zxay, s, b)) count += c;
 		}
 	}
 

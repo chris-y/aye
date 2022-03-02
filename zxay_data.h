@@ -14,5 +14,5 @@
 uint32_t zxay_data_offset(void *zxayemul, int song, int block);
 
 /* Dedupe data blocks */
-uint32_t zxay_data_dedupe(void *zxayemul);
+uint16_t zxay_data_dedupe(void *zxayemul);
 #endif
