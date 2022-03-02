@@ -11,16 +11,18 @@
 #include "zxay_data.h"
 #include "zxay_file.h"
 
-static bool compare_block(uint8_t *a, uint8_t *b, uint32_t len)
+static int32_t compare_block(uint8_t *a, uint8_t *b, uint32_t alen, uint32_t blen)
 {
 	uint32_t i = 0;
+	int32_t offset = 0;
+	bool start_found = false;
 
-	while(i < len) {
-		if(a[i] != b[i]) return false;
+	while(i < blen) {
+		if(a[i] != b[i]) return -1;
 		i++;
 	}
 
-	return true;
+	return offset;
 }
 
 static bool check_dupe(struct zxay_file *zxay, int song, int block)
@@ -33,9 +35,9 @@ static bool check_dupe(struct zxay_file *zxay, int song, int block)
         for(s = song; s <= zxay->header->NumOfSongs; s++) {
                 for(b = 0; b < zxay->songblkcount[s]; b++) {
 			if((s == song) && (b <= block)) continue;
-                        if(zxay->datablocks[song]->len[block] != zxay->datablocks[s]->len[b]) continue;
+                        if(zxay->datablocks[song]->len[block] < zxay->datablocks[s]->len[b]) continue;
 			if(compare_block(zxay->datablocks[song]->data[block], zxay->datablocks[s]->data[b],
-					zxay->datablocks[song]->len[block])) {
+				zxay->datablocks[song]->len[block], zxay->datablocks[s]->len[block]) >= 0) {
 				zxay->datablocks[s]->len[b] = 0;
 				zxay->datablocks[s]->song[b] = song;
 				zxay->datablocks[s]->block[b] = block;
