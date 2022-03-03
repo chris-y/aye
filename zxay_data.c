@@ -17,7 +17,7 @@ static int32_t compare_block(uint8_t *a, uint8_t *b, uint32_t alen, uint32_t ble
 	int32_t offset = 0;
 	bool start_found = false;
 
-	while(i < blen) {
+	while(i < alen) {
 		if(a[i] != b[i]) return -1;
 		i++;
 	}
@@ -36,7 +36,7 @@ static uint16_t check_dupe(struct zxay_file *zxay, int song, int block)
         for(s = song; s <= zxay->header->NumOfSongs; s++) {
                 for(b = 0; b < zxay->songblkcount[s]; b++) {
 			if((s == song) && (b <= block)) continue;
-                        if(zxay->datablocks[song]->len[block] < zxay->datablocks[s]->len[b]) continue;
+                        if(zxay->datablocks[song]->len[block] != zxay->datablocks[s]->len[b]) continue;
 			if(compare_block(zxay->datablocks[song]->data[block], zxay->datablocks[s]->data[b],
 				zxay->datablocks[song]->len[block], zxay->datablocks[s]->len[block]) >= 0) {
 				zxay->datablocks[s]->len[b] = 0;
