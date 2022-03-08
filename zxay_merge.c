@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "zxay_merge.h"
@@ -44,16 +45,18 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 	zxaym->header->NumOfSongs = zxay->header->NumOfSongs + zxayj->header->NumOfSongs + 1;
 
 	/* Copy song structures */
-	zxaym->songsstruct = calloc(sizeof(struct zxay_song), zxaym->header->NumOfSongs);
-	memcpy(zxaym->songsstruct, zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1));
-	memcpy(zxaym->songsstruct + zxay->header->NumOfSongs + 1, zxayj->songsstruct, sizeof(struct zxay_song) * (zxayj->header->NumOfSongs + 1));
+	zxaym->songsstruct = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_song));
+	struct zxay_song *p = zxaym->songsstruct;
+	memcpy(p, zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1));
+	p += zxay->header->NumOfSongs + 1;
+	memcpy(p, zxayj->songsstruct, sizeof(struct zxay_song) * (zxayj->header->NumOfSongs + 1));
 
-	zxaym->songname = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(char *));
-	zxaym->songdata = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(struct zxay_songdata *));
-	zxaym->songptrs = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(struct zxay_songptrs *));
-	zxaym->songblks = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(struct zxay_songblks *));
-	zxaym->songblkcount = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(int16_t *));
-	zxaym->datablocks = calloc(1, (zxaym->header->NumOfSongs + 1) * sizeof(struct zxay_datablks *));
+	zxaym->songname = calloc(zxaym->header->NumOfSongs + 1, sizeof(char *));
+	zxaym->songdata = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songdata *));
+	zxaym->songptrs = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songptrs *));
+	zxaym->songblks = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songblks *));
+	zxaym->songblkcount = calloc(zxaym->header->NumOfSongs + 1, sizeof(int16_t *));
+	zxaym->datablocks = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_datablks *));
 
 	int j = 0;
 	struct zxay_file *src = zxay;
@@ -67,19 +70,12 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 			j = i - zxay->header->NumOfSongs;
 		}
 
-		if(src->songname[j]) {
-			zxaym->songname[i] = strdup(src->songname[j]);
-		} else {
-			zxaym->songname[i] = NULL;
-		}
-
+		zxaym->songname[i] = src->songname[j];
 		zxaym->songblkcount[i] = src->songblkcount[j];
-
-		memcpy(zxaym->songdata[i], src->songdata[j], sizeof(struct zxay_songdata));
-		memcpy(zxaym->songptrs[i], src->songptrs[j], sizeof(struct zxay_songptrs));
-		memcpy(zxaym->songblks[i], src->songblks[j], sizeof(struct zxay_songblks));
-		memcpy(zxaym->datablocks[i], src->datablocks[j], sizeof(struct zxay_datablks));
-
+		zxaym->songdata[i] = src->songdata[j];
+		zxaym->songptrs[i] = src->songptrs[j];
+		zxaym->songblks[i] = src->songblks[j];
+		zxaym->datablocks[i] = src->datablocks[j];
 	}
 
 	zxay->free_data = false;

@@ -312,21 +312,23 @@ void zxay_free(void *zxayemul)
 	
 	/* free song names */
 	for(int i = 0; i <= zxay->header->NumOfSongs; i++) {
-		if(zxay->songname[i]) free(zxay->songname[i]);
-		if(zxay->songsstruct[i]) free(zxay->songsstruct[i]);
-		if(zxay->songdata[i]) free(zxay->songdata[i]);
-		if(zxay->songptrs[i]) free(zxay->songptrs[i]);
-		if((zxay->datablocks[i]) && (zxay->free_data != false)) {
 
-			if(zxay->datablocks[i]->data) {
-				for(int b = 0; b < zxay->songblkcount[i]; b++) {
-					if(zxay->datablocks[i]->data[b]) free(zxay->datablocks[i]->data[b]);
+		if(zxay->free_data != false) {
+			if(zxay->songname[i]) free(zxay->songname[i]);
+			if(zxay->songsstruct[i]) free(zxay->songsstruct[i]);
+			if(zxay->songdata[i]) free(zxay->songdata[i]);
+			if(zxay->songptrs[i]) free(zxay->songptrs[i]);
+			if(zxay->datablocks[i]) {
+				if(zxay->datablocks[i]->data) {
+					for(int b = 0; b < zxay->songblkcount[i]; b++) {
+						if(zxay->datablocks[i]->data[b]) free(zxay->datablocks[i]->data[b]);
+					}
+					free(zxay->datablocks[i]->data);
 				}
-				free(zxay->datablocks[i]->data);
+				if(zxay->datablocks[i]->len) free(zxay->datablocks[i]->len);
+				if(zxay->datablocks[i]->song) free(zxay->datablocks[i]->song);
+				if(zxay->datablocks[i]->block) free(zxay->datablocks[i]->block);
 			}
-			if(zxay->datablocks[i]->len) free(zxay->datablocks[i]->len);
-			if(zxay->datablocks[i]->song) free(zxay->datablocks[i]->song);
-			if(zxay->datablocks[i]->block) free(zxay->datablocks[i]->block);
 		}
 	}
 	if(zxay->datablocks) free(zxay->datablocks);
