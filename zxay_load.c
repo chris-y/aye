@@ -376,15 +376,10 @@ void *zxay_load(char *filename)
 					zxay->songblkcount &&
 					zxay->datablocks) {
 				for(int i = 0; i <= zxay->header->NumOfSongs; i++) {
-printf("1\n");
 					zxay->songname[i] = aye_read_songname(fp, zxay->off_songstruct, zxay->songsstruct[i], i);
-printf("2\n");
 					zxay->songdata[i] = aye_read_songdata(fp, zxay->off_songstruct, &zxay->off_songdata[i], zxay->songsstruct[i], i);
-printf("3\n");
 					zxay->songptrs[i] = aye_read_songptrs(fp, zxay->off_songdata[i], zxay->songdata[i]);
-printf("4\n");
 					zxay->songblks[i] = aye_read_songdatablks(fp, &zxay->off_songblks[i], &zxay->songblkcount[i], zxay->off_songdata[i], zxay->songdata[i]);
-printf("5\n");
 					zxay->datablocks[i] = aye_read_datablocks(fp, zxay->off_songblks[i], zxay->songblkcount[i], zxay->songblks[i]);
 				}
 			} else {
