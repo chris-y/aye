@@ -18,12 +18,14 @@
 #include "zxay_peek.h"
 #include "zxay_poke.h"
 #include "zxay_save.h"
+#include "zxay_merge.h"
 
 int main(int argc, char **argv)
 {
 	int c;
 	char *outfile = NULL;
 	char *infile = NULL;
+	char *joinfile = NULL;
 	char *newauthor = NULL;
 	char *newmisc = NULL;
 	char *newtitle = NULL;
@@ -31,11 +33,12 @@ int main(int argc, char **argv)
 	int debug = 0;
 	bool quiet = false;
 	bool updates = false;
-	void *zxay;
+	void *zxay = NULL;
+	void *zxayjoin = NULL;
 	int i = 0;
 	char numsongs;
 
-	while ((c = getopt(argc, argv, "hqd:s:a:m:t:o:")) != -1) {
+	while ((c = getopt(argc, argv, "hqd:s:a:m:t:j:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf(AYECOPYVER);
@@ -47,6 +50,7 @@ int main(int argc, char **argv)
 				"  -a New author\n"
 				"  -m New misc\n"
 				"  -t New title\n"
+				"  -j Join\n"
 				"  -o Output file\n\n");
 				return 0;
 			break;
@@ -67,6 +71,9 @@ int main(int argc, char **argv)
 			break;
 			case 't':
 				newtitle = optarg;
+			break;
+			case 'j':
+				joinfile = optarg;
 			break;
 			case 'o':
 				outfile = optarg;
@@ -130,6 +137,14 @@ int main(int argc, char **argv)
 				printf("WARNING: Invalid song (%d/%d) specified.\n", song + 1, numsongs + 1);
 			}
 		}
+		if(joinfile) {
+			if(!quiet) printf("\nJoining %s\n", joinfile);
+			if(zxayjoin = zxay_load(joinfile)) {
+			} else {
+				printf("ERROR: Unable to read file; not joining\n");
+			}
+			zxay_merge(zxay, zxayjoin);
+		}
 		if(outfile) {
 			if(!quiet) printf("\nOutput: %s\n", outfile);
 			zxay_save(zxay, outfile, debug);
@@ -138,7 +153,7 @@ int main(int argc, char **argv)
 				printf("WARNING: No output file specified; changes have not been saved.\n");
 			}
 		}
-
+		if(zxayjoin) zxay_free(zxayjoin); //TODO: Check this, might double-free
 		zxay_free(zxay);
 	}
 
