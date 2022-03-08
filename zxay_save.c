@@ -46,7 +46,6 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	int b = 0;
 	uint32_t squashed = 0;
 	struct zxay_songblks *blk = NULL;
-	struct zxay_song *song = NULL;
 	
 	int16_t extra_data = 0;
 	int16_t extra_songblks = 0;
@@ -91,18 +90,14 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 	 
 	extra_data = 0;
 	
-	song = zxay->songsstruct;
-	
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
 		if(zxay->songname[i]) { /* if this is NULL the structure will already contain NULL offset */
-			zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGNAME_OFFSET + extra_data, song->PSongName);
+			zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGNAME_OFFSET + extra_data, zxay->songsstruct[i]->PSongName);
 			extra_data += strlen(zxay->songname[i]) + 1; /* plus 1 for NULL */
 		}
 
-		zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGDATA_OFFSET + extra_data, song->PSongData);
+		zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGDATA_OFFSET + extra_data, zxay->songsstruct[i]->PSongData);
 		extra_data += sizeof(struct zxay_songdata);
-
-		song++;
 	}
 
 	extra_data -= sizeof(struct zxay_songdata) * (zxay->header->NumOfSongs + 1);
@@ -136,8 +131,10 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 		//printf("es: %x \n" ,extra_songblks);
 	}
 
-	zxay_write(fp, (uint8_t *)zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1), debug, ZXAY_S_SONG);
-	
+	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
+		zxay_write(fp, (uint8_t *)zxay->songsstruct[i], sizeof(struct zxay_song), debug, ZXAY_S_SONG);
+	}
+
 	for(i = 0; i <= zxay->header->NumOfSongs; i++) {
 		zxay_write(fp, (uint8_t *)zxay->songname[i], strlen(zxay->songname[i]) + 1, debug, ZXAY_S_TEXT);
 		zxay_write(fp, (uint8_t *)zxay->songdata[i], sizeof(struct zxay_songdata), debug, ZXAY_S_SONGDATA);

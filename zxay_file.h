@@ -22,7 +22,7 @@ struct zxay_datablks {
 
 struct zxay_file {
 	struct zxay_header *header;
-	struct zxay_song *songsstruct;
+	struct zxay_song **songsstruct;
 	char *author;
 	char *misc;
 	char **songname;
