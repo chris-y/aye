@@ -316,7 +316,7 @@ void zxay_free(void *zxayemul)
 		if(zxay->songsstruct[i]) free(zxay->songsstruct[i]);
 		if(zxay->songdata[i]) free(zxay->songdata[i]);
 		if(zxay->songptrs[i]) free(zxay->songptrs[i]);
-		if(zxay->datablocks[i]) {
+		if((zxay->datablocks[i]) && (zxay->free_data != false)) {
 
 			if(zxay->datablocks[i]->data) {
 				for(int b = 0; b < zxay->songblkcount[i]; b++) {
@@ -382,6 +382,7 @@ void *zxay_load(char *filename)
 					zxay->songblks[i] = aye_read_songdatablks(fp, &zxay->off_songblks[i], &zxay->songblkcount[i], zxay->off_songdata[i], zxay->songdata[i]);
 					zxay->datablocks[i] = aye_read_datablocks(fp, zxay->off_songblks[i], zxay->songblkcount[i], zxay->songblks[i]);
 				}
+			zxay->free_data = true;
 			} else {
 				printf("Unable to allocate memory\n");
 				free(zxay);

@@ -20,6 +20,17 @@
 #include "zxay_save.h"
 #include "zxay_merge.h"
 
+static void print_ay_details(void *zxay, uint8_t numsongs)
+{
+	printf("Author: %s\n", zxay_peek(zxay, ZXAY_AUTHOR));
+	printf("Misc: %s\n", zxay_peek(zxay, ZXAY_MISC));
+	printf("Tracks: %d\n", numsongs + 1);
+
+	for(int i = 0; i <= numsongs; i++) {
+		printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -35,8 +46,8 @@ int main(int argc, char **argv)
 	bool updates = false;
 	void *zxay = NULL;
 	void *zxayjoin = NULL;
-	int i = 0;
-	char numsongs;
+	void *zxaymerge = NULL;
+	uint8_t numsongs;
 
 	while ((c = getopt(argc, argv, "hqd:s:a:m:t:j:o:")) != -1) {
 		switch(c) {
@@ -104,18 +115,8 @@ int main(int argc, char **argv)
 
 	if(zxay = zxay_load(infile)) {
 
-		if(!quiet) {
-			printf("Author: %s\n", zxay_peek(zxay, ZXAY_AUTHOR));
-			printf("Misc: %s\n", zxay_peek(zxay, ZXAY_MISC));
-
-			numsongs = zxay_peek(zxay, ZXAY_SONGCOUNT)[0];
-
-			printf("Tracks: %d\n", numsongs + 1);
-		
-			for(i = 0; i <= numsongs; i++) {
-				printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
-			}
-		}
+		numsongs = zxay_peek(zxay, ZXAY_SONGCOUNT)[0];
+		if(!quiet) print_ay_details(zxay, numsongs);
 
 		if(debug) zxay_dump(zxay, debug);
 		if(updates && (!quiet)) printf("\nNew metadata:\n");
@@ -138,12 +139,18 @@ int main(int argc, char **argv)
 			}
 		}
 		if(joinfile) {
-			if(!quiet) printf("\nJoining %s\n", joinfile);
 			if(zxayjoin = zxay_load(joinfile)) {
+				if(!quiet) printf("\nJoining %s\n", joinfile);
+				numsongs = zxay_peek(zxayjoin, ZXAY_SONGCOUNT)[0];
+				if(!quiet) print_ay_details(zxayjoin, numsongs);
 			} else {
-				printf("ERROR: Unable to read file; not joining\n");
+				printf("ERROR: Unable to read file; not joining %s\n", joinfile);
 			}
-			zxay_merge(zxay, zxayjoin);
+			zxaymerge = zxay_merge(zxay, zxayjoin);
+
+			zxay_free(zxayjoin);
+			zxay_free(zxay);
+			zxay = zxaymerge;
 		}
 		if(outfile) {
 			if(!quiet) printf("\nOutput: %s\n", outfile);
@@ -153,7 +160,7 @@ int main(int argc, char **argv)
 				printf("WARNING: No output file specified; changes have not been saved.\n");
 			}
 		}
-		if(zxayjoin) zxay_free(zxayjoin); //TODO: Check this, might double-free
+
 		zxay_free(zxay);
 	}
 

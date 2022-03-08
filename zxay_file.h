@@ -9,6 +9,7 @@
 #define ZXAY_FILE_H 1
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "zxay.h"
 
@@ -34,6 +35,7 @@ struct zxay_file {
 	int16_t *off_songdata;
 	int16_t *off_songblks;
 	int16_t *songblkcount;
+	bool free_data;
 };
 
 #endif
