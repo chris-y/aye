@@ -44,13 +44,7 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 	/* Add the 2nd file's number of songs to the first, add 1 as it starts at 0 */
 	zxaym->header->NumOfSongs = zxay->header->NumOfSongs + zxayj->header->NumOfSongs + 1;
 
-	/* Copy song structures */
-	zxaym->songsstruct = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_song));
-	struct zxay_song *p = zxaym->songsstruct;
-	memcpy(p, zxay->songsstruct, sizeof(struct zxay_song) * (zxay->header->NumOfSongs + 1));
-	p += zxay->header->NumOfSongs + 1;
-	memcpy(p, zxayj->songsstruct, sizeof(struct zxay_song) * (zxayj->header->NumOfSongs + 1));
-
+	/* Copy data */
 	zxaym->songname = calloc(zxaym->header->NumOfSongs + 1, sizeof(char *));
 	zxaym->songdata = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songdata *));
 	zxaym->songptrs = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songptrs *));
@@ -70,6 +64,7 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 			j = i - zxay->header->NumOfSongs;
 		}
 
+		zxaym->songsstruct[i] = src->songsstruct[j];
 		zxaym->songname[i] = src->songname[j];
 		zxaym->songblkcount[i] = src->songblkcount[j];
 		zxaym->songdata[i] = src->songdata[j];
