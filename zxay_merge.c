@@ -45,6 +45,7 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 	zxaym->header->NumOfSongs = zxay->header->NumOfSongs + zxayj->header->NumOfSongs + 1;
 
 	/* Copy data */
+	zxaym->songsstruct = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_song *));
 	zxaym->songname = calloc(zxaym->header->NumOfSongs + 1, sizeof(char *));
 	zxaym->songdata = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songdata *));
 	zxaym->songptrs = calloc(zxaym->header->NumOfSongs + 1, sizeof(struct zxay_songptrs *));
