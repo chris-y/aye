@@ -18,12 +18,25 @@
 #include "zxay_peek.h"
 #include "zxay_poke.h"
 #include "zxay_save.h"
+#include "zxay_merge.h"
+
+static void print_ay_details(void *zxay, uint8_t numsongs)
+{
+	printf("Author: %s\n", zxay_peek(zxay, ZXAY_AUTHOR));
+	printf("Misc: %s\n", zxay_peek(zxay, ZXAY_MISC));
+	printf("Tracks: %d\n", numsongs + 1);
+
+	for(int i = 0; i <= numsongs; i++) {
+		printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
+	}
+}
 
 int main(int argc, char **argv)
 {
 	int c;
 	char *outfile = NULL;
 	char *infile = NULL;
+	char *joinfile = NULL;
 	char *newauthor = NULL;
 	char *newmisc = NULL;
 	char *newtitle = NULL;
@@ -31,11 +44,12 @@ int main(int argc, char **argv)
 	int debug = 0;
 	bool quiet = false;
 	bool updates = false;
-	void *zxay;
-	int i = 0;
-	char numsongs;
+	void *zxay = NULL;
+	void *zxayjoin = NULL;
+	void *zxaymerge = NULL;
+	uint8_t numsongs;
 
-	while ((c = getopt(argc, argv, "hqd:s:a:m:t:o:")) != -1) {
+	while ((c = getopt(argc, argv, "hqd:s:a:m:t:j:o:")) != -1) {
 		switch(c) {
 			case 'h':
 				printf(AYECOPYVER);
@@ -47,6 +61,7 @@ int main(int argc, char **argv)
 				"  -a New author\n"
 				"  -m New misc\n"
 				"  -t New title\n"
+				"  -j Join\n"
 				"  -o Output file\n\n");
 				return 0;
 			break;
@@ -67,6 +82,9 @@ int main(int argc, char **argv)
 			break;
 			case 't':
 				newtitle = optarg;
+			break;
+			case 'j':
+				joinfile = optarg;
 			break;
 			case 'o':
 				outfile = optarg;
@@ -97,18 +115,8 @@ int main(int argc, char **argv)
 
 	if(zxay = zxay_load(infile)) {
 
-		if(!quiet) {
-			printf("Author: %s\n", zxay_peek(zxay, ZXAY_AUTHOR));
-			printf("Misc: %s\n", zxay_peek(zxay, ZXAY_MISC));
-
-			numsongs = zxay_peek(zxay, ZXAY_SONGCOUNT)[0];
-
-			printf("Tracks: %d\n", numsongs + 1);
-		
-			for(i = 0; i <= numsongs; i++) {
-				printf("  %d: %s\n", i + 1, zxay_peek_song(zxay, i, ZXAY_SONG_NAME));
-			}
-		}
+		numsongs = zxay_peek(zxay, ZXAY_SONGCOUNT)[0];
+		if(!quiet) print_ay_details(zxay, numsongs);
 
 		if(debug) zxay_dump(zxay, debug);
 		if(updates && (!quiet)) printf("\nNew metadata:\n");
@@ -129,6 +137,20 @@ int main(int argc, char **argv)
 			} else {
 				printf("WARNING: Invalid song (%d/%d) specified.\n", song + 1, numsongs + 1);
 			}
+		}
+		if(joinfile) {
+			if(zxayjoin = zxay_load(joinfile)) {
+				if(!quiet) printf("\nJoining %s\n", joinfile);
+				numsongs = zxay_peek(zxayjoin, ZXAY_SONGCOUNT)[0];
+				if(!quiet) print_ay_details(zxayjoin, numsongs);
+			} else {
+				printf("ERROR: Unable to read file; not joining %s\n", joinfile);
+			}
+			zxaymerge = zxay_merge(zxay, zxayjoin);
+
+			zxay_free(zxayjoin);
+			zxay_free(zxay);
+			zxay = zxaymerge;
 		}
 		if(outfile) {
 			if(!quiet) printf("\nOutput: %s\n", outfile);
