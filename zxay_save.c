@@ -95,7 +95,6 @@ bool zxay_save(void *zxayemul, char *filename, int debug)
 			zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGNAME_OFFSET + extra_data, zxay->songsstruct[i]->PSongName);
 			extra_data += strlen(zxay->songname[i]) + 1; /* plus 1 for NULL */
 		}
-
 		zxay_put_int16(sizeof(struct zxay_song) * (zxay->header->NumOfSongs - i) + sizeof(struct zxay_song) - PSONGDATA_OFFSET + extra_data, zxay->songsstruct[i]->PSongData);
 		extra_data += sizeof(struct zxay_songdata);
 	}

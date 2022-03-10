@@ -62,7 +62,7 @@ void *zxay_merge(void *zxayemul, void *zxayemulj)
 			j = i;
 		} else {
 			src = zxayj;
-			j = i - zxay->header->NumOfSongs;
+			j = i - (zxay->header->NumOfSongs + 1);
 		}
 
 		zxaym->songsstruct[i] = src->songsstruct[j];
